@@ -1,0 +1,5 @@
+EOT = "\u0004".
+NEWLINE = CR LF. 
+CR = "\u000D".
+LF ="\u000A".
+BLANK = " ".

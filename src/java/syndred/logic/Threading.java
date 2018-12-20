@@ -25,11 +25,11 @@ public class Threading {
 	private static Map<String, Parser> parsers = new HashMap<String, Parser>();
 	private static Map<String, RawDraftContentState> states = new HashMap<String, RawDraftContentState>();
 
-	public static void callback(String instence, Function<RawDraftContentState, Exception> callback) {
-		output.put(instence, new Function<RawDraftContentState, Exception>() {
+	public static void callback(String instance, Function<RawDraftContentState, Exception> callback) {
+		output.put(instance, new Function<RawDraftContentState, Exception>() {
 			@Override
 			public Exception apply(RawDraftContentState state) {
-				states.put(instence, state);
+				states.put(instance, state);
 				return callback.apply(state);
 			}
 		});

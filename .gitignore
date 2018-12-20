@@ -7,3 +7,6 @@ res/public/script.js*
 
 node_modules/
 target/
+.DS_Store
+*.lst
+vendor/tmp/

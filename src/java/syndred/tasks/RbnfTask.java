@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import CP.Ebnf.Ebnf;
+import CP.Ebnf1.Ebnf1_EBNF;
 import syndred.entities.Block;
 import syndred.entities.InlineStyleRange;
 import syndred.entities.Parser;
@@ -21,7 +20,7 @@ import tree.Node;
 
 public class RbnfTask extends Task {
 
-	private Thread ebnf;
+	private Thread ebnfThread;
 
 	private Shared shared;
 
@@ -31,26 +30,28 @@ public class RbnfTask extends Task {
 			Parser parser) throws ExecutionException {
 		super(input, output, parser);
 
-		ebnf = new Thread(() -> {
+		ebnfThread = new Thread(() -> {
+			Ebnf1_EBNF ebnf = new Ebnf1_EBNF();	
+			ebnf.init(shared);
+			
 			while (!Thread.interrupted()) {
 				try {
-					Ebnf.root = Ebnf.syntaxDrivenParse();
+					ebnf.root = ebnf.syntaxDrivenParse();					
 					success = true;
 
 					while (success)
 						Thread.sleep(100);
 				} catch (Throwable thrown) {
 				}
-			}
+			} 
 		});
 
 		shared = new Shared();
-		shared.setGrammar(parser.getGrammar().chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
-		shared.setRegex("\\u00FC:\n\\u00FD:".chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
+//		shared.setGrammar(parser.getGrammar().chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
+//		shared.setRegex("\\u00FC:\n\\u00FD:".chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
 
 		try {
-			Ebnf.init(shared);
-			ebnf.start();
+			ebnfThread.start();
 		} catch (Throwable thrown) {
 			throw new ExecutionException(thrown);
 		}
@@ -58,8 +59,8 @@ public class RbnfTask extends Task {
 
 	@Override
 	public void close() {
-		while (!ebnf.isInterrupted() || ebnf.isAlive())
-			ebnf.interrupt();
+		while (!ebnfThread.isInterrupted() || ebnfThread.isAlive())
+			ebnfThread.interrupt();
 	}
 
 	@Override
@@ -67,6 +68,9 @@ public class RbnfTask extends Task {
 		DraftState.del(state, "Error");
 		DraftState.del(state, "Success");
 
+		// TODO static !!!!!!!!!
+		Node.previousOp = 0;
+		
 		Texts sharedText = shared.getSharedText();
 		List<RichChar> next = getRichChars(state);
 		List<RichChar> prev = sharedText.getRichChars();
@@ -78,24 +82,29 @@ public class RbnfTask extends Task {
 		} catch (IndexOutOfBoundsException e) {
 		}
 
-		Shared.maxPosInParse = -1;
+		shared.maxPosInParse = -1;
 		sharedText.setParsePos(0);
 		sharedText.setRichChars(next);
 		success = false;
 
 		try {
-			while (!success && Shared.maxPosInParse < 0 && sharedText.getParsePos() < sharedText.getTextLen())
+			while (!success && shared.maxPosInParse < 0 && sharedText.getParsePos() < sharedText.getTextLen())
 				Thread.sleep(100);
 		} catch (InterruptedException e) {
 			return state;
 		}
 
-		if (Shared.maxPosInParse >= 0)
-			DraftState.add(state, "Error", Shared.maxPosInParse, next.size() - Shared.maxPosInParse);
-		else if (success)
+		if (shared.maxPosInParse >= 0) {
+//			System.out.println("ERROR");
+			DraftState.add(state, "Error", shared.maxPosInParse, next.size() - shared.maxPosInParse);
+		} else if (success) {
+//			System.out.println("SUCCESS");
 			DraftState.add(state, "Success", 0, next.size());
-
+		}
+		
+//		System.out.println(Node.resultString);
 		state.setParseTree(Node.resultString);
+		
 		return state;
 	}
 

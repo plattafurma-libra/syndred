@@ -37,6 +37,8 @@ export default class Parser extends React.Component {
 	}
 
 	render() {
+		const date = new Date();
+		
 		return (
 			<form id='parser' className='form-horizontal well'>
 				<fieldset>
@@ -47,7 +49,7 @@ export default class Parser extends React.Component {
 						+ (this.state.error ? ' has-error' : '')
 						+ (this.state.running ?' has-success' : '')}>
 						<label className='col-lg-2 control-label'>
-							Gramma
+							Grammar {date.toString()}
 						</label>
 						<div className='col-lg-10'>
 							<Textarea

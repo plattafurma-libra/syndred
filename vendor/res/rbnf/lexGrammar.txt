@@ -1,0 +1,9 @@
+dictionary={entry [NEWLINE]} EOT.
+entry = headword":"definition".".
+headword = ("[a-zA-Z]+" <Typeface:Arial; Weight:bold>|
+"[\u0370-\u03FF]+" <Typeface:Arial; Weight:bold>).
+definition = [BLANK] pos {sense}.
+pos = "m" <Typeface:Courier;Style:italic> | "f" <Typeface:Courier; Style:italic> | "n"<Typeface:Courier;Style:italic> |"adj" <Typeface:Courier; Style:italic>  | "adv"<Typeface:Courier; Style:italic> | "v.t." <Typeface:Courier;Style:italic>| "v.i."<Typeface:Courier;Style:italic> | "v.r."<Typeface:Courier; Style:italic>. 
+sense = BLANK "[a-zA-Z]+" <Typeface:Arial>.
+
+
