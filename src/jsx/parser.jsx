@@ -37,8 +37,6 @@ export default class Parser extends React.Component {
 	}
 
 	render() {
-		const date = new Date();
-		
 		return (
 			<form id='parser' className='form-horizontal well'>
 				<fieldset>
@@ -49,9 +47,26 @@ export default class Parser extends React.Component {
 						+ (this.state.error ? ' has-error' : '')
 						+ (this.state.running ?' has-success' : '')}>
 						<label className='col-lg-2 control-label'>
-							Grammar {date.toString()}
+							Grammar
 						</label>
 						<div className='col-lg-10'>
+							{/* TODO change grammar structure: textarea -> select/upload */}
+						
+							<select 
+								className='form-control'
+								onChange={(event) => this.setState({
+									grammar: event.target.value
+								})}
+								value={this.state.grammar}>
+									{/* TODO key/value?, see below (Type) */}
+									<optgroup label='*.txt'>
+										<option>lexGrammar</option>
+									</optgroup>
+									
+									<option disabled>Upload RBNF...</option>
+							</select>
+							
+							{/*
 							<Textarea
 								className='form-control'
 								onChange={(event) => this.setState({
@@ -61,9 +76,11 @@ export default class Parser extends React.Component {
 								style={{ resize: 'vertical' }}
 								value={this.state.grammar}
 							/>
+							 */}
 						</div>
 					</div>
 
+					{/* TODO remove redundant type dependencies
 					<div className={'form-group'
 						+ (this.state.error ? ' has-error' : '')
 						+ (this.state.running ?' has-success' : '')}>
@@ -86,6 +103,7 @@ export default class Parser extends React.Component {
 							</select>
 						</div>
 					</div>
+					*/}
 
 					<div className={'form-group'
 						+ (this.state.error ? ' has-error' : '')
