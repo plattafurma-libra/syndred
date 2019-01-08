@@ -96,7 +96,7 @@ TYPE Identifier = ARRAY IdLen OF CHAR;
     			R:        TextsCP.Reader;       
     			W:        TextsCP.Writer;       
     			EbnfReader:texts.Texts;
-    			iNode:tree.Node;
+    			iNode*:tree.Node;
    
     			shared:texts.Shared;
     

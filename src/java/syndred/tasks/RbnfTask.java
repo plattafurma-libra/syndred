@@ -20,18 +20,20 @@ import tree.Node;
 
 public class RbnfTask extends Task {
 
-	private Thread ebnfThread;
-
-	private Shared shared;
-
-	private boolean success;
+		private Thread ebnfThread;
+	
+		private Shared shared;
+	
+		private Ebnf1_EBNF ebnf;
+		
+		private boolean success;
 
 	public RbnfTask(BlockingQueue<RawDraftContentState> input, Function<RawDraftContentState, Exception> output,
 			Parser parser) throws ExecutionException {
 		super(input, output, parser);
 
 		ebnfThread = new Thread(() -> {
-			Ebnf1_EBNF ebnf = new Ebnf1_EBNF();	
+			ebnf = new Ebnf1_EBNF();	
 			ebnf.init(shared);
 			
 			while (!Thread.interrupted()) {
@@ -68,8 +70,7 @@ public class RbnfTask extends Task {
 		DraftState.del(state, "Error");
 		DraftState.del(state, "Success");
 
-		// TODO static !!!!!!!!!
-		Node.previousOp = 0;
+		ebnf.iNode.reset();
 		
 		Texts sharedText = shared.getSharedText();
 		List<RichChar> next = getRichChars(state);
@@ -101,10 +102,8 @@ public class RbnfTask extends Task {
 //			System.out.println("SUCCESS");
 			DraftState.add(state, "Success", 0, next.size());
 		}
-		
-//		System.out.println(Node.resultString);
+
 		state.setParseTree(Node.resultString);
-		
 		return state;
 	}
 

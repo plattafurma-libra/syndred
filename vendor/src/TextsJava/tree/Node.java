@@ -16,7 +16,7 @@ public class Node /*implements INode*/{
 	
 	public static String resultString;
 	private StringBuffer sb = new StringBuffer();
-	/*private*/public static int previousOp = ROOT;
+	private int previousOp = ROOT;
 
 	public void clearString() {
 		sb = new StringBuffer();
@@ -27,6 +27,9 @@ public class Node /*implements INode*/{
 		return sb.toString();
 	}
 	
+	public void reset() {
+		previousOp = ROOT;
+	}
 	
 	/*private String getParsedToken(TerminalTreeNode node) {
 		String res="";
