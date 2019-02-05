@@ -78,7 +78,7 @@ export default class Editor extends React.Component {
 			(message) => {
 				let data = JSON.parse(message.body);
 				if (Object.getOwnPropertyNames(data).length == 0) return;
-
+				
 				let cursor = this.state.editor.getSelection();
 				let editor = Draft.EditorState
 					.push(this.state.editor, Draft.convertFromRaw(data));
@@ -86,10 +86,11 @@ export default class Editor extends React.Component {
 				if (cursor.getHasFocus())
 					editor = Draft.EditorState.forceSelection(editor, cursor);
 
-				console.log('parseTree', data.parseTree);
+				//console.log('parseTree', data.parseTree);
+				console.log('currentInlineStyle', editor.getCurrentInlineStyle()); /* TODO OrderedSet get Success/Error */
 				let treeData = data.parseTree
 					? JSON.parse(data.parseTree) : null;
-
+			
 				this.setState({ editor, treeData, treeView: false },
 					() => this.screen.classList.remove('disabled'));
 			}
@@ -140,7 +141,8 @@ export default class Editor extends React.Component {
 			<div className='well flex-column disabled'
 				ref={(element) => this.screen = ReactDOM.findDOMNode(element)}>
 				<div className='editor-menu'>
-					{this.renderFullscreen()}
+					{this.renderFullscreen()}	
+					{this.renderInput()}
 					{this.renderStyles()}
 					{this.renderSelect('Size', this.sizeMap)}
 					{this.renderSelect('Font', this.fontMap)}
@@ -174,7 +176,7 @@ export default class Editor extends React.Component {
 			</div>
 		);
 	}
-
+	
 	renderFullscreen() {
 		if (!screenfull.enabled) return null;
 		let active = this.state.fullscreen;
@@ -230,6 +232,35 @@ export default class Editor extends React.Component {
 				disabled={!this.state.treeData} onClick={() => toggle()}>
 				<i className='fa fa-code-fork' />
 			</button>
+		);
+	}
+	
+	handleFile(file) {		
+		let reader = new FileReader();
+		reader.onloadend = (e) => {
+			let content = e.target.result;
+			
+			let contentState = Draft.ContentState.createFromText(content);
+			let editorState = Draft.EditorState.createWithContent(contentState);
+			
+			// TODO clear parsetree?
+			// TODO focus if parsetree
+			this.setState({ /*treeData: null, treeView: false,*/ editor : editorState }, () => this.parse());
+		};
+		reader.readAsText(file);
+	}
+	
+	renderInput() {		
+		return (
+			<label className='btn btn-default'>
+				<i className='fa fa-paste' />
+				<input 
+					type='file'
+					accept='.txt'
+					style={{display: 'none'}}
+					onChange={e => this.handleFile(e.target.files[0])} />
+					{/* TODO onChange? */}
+			</label>	
 		);
 	}
 

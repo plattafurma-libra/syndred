@@ -5,6 +5,7 @@ import Stomp from '@stomp/stompjs';
 
 import Editor from './editor';
 import Parser from './parser';
+import Generator from './generator';
 
 class Syndred extends React.Component {
 
@@ -43,6 +44,7 @@ class Syndred extends React.Component {
 						run={() => this.editor.parse()}
 						socket={this.state.socket}
 					/>
+					<Generator/>
 				</div>
 				<div className='col-md-7'>
 					<Editor
