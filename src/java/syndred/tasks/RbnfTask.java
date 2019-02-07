@@ -95,15 +95,16 @@ public class RbnfTask extends Task {
 			return state;
 		}
 
+		String parseTree = null;
+		
 		if (shared.maxPosInParse >= 0) {
-//			System.out.println("ERROR");
 			DraftState.add(state, "Error", shared.maxPosInParse, next.size() - shared.maxPosInParse);
 		} else if (success) {
-//			System.out.println("SUCCESS");
 			DraftState.add(state, "Success", 0, next.size());
-		}
+			parseTree = Node.resultString;
+		} 
 
-		state.setParseTree(Node.resultString);
+		state.setParseTree(parseTree);
 		return state;
 	}
 

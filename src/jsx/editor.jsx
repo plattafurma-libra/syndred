@@ -87,7 +87,6 @@ export default class Editor extends React.Component {
 					editor = Draft.EditorState.forceSelection(editor, cursor);
 
 				//console.log('parseTree', data.parseTree);
-				console.log('currentInlineStyle', editor.getCurrentInlineStyle()); /* TODO OrderedSet get Success/Error */
 				let treeData = data.parseTree
 					? JSON.parse(data.parseTree) : null;
 			
@@ -243,9 +242,7 @@ export default class Editor extends React.Component {
 			let contentState = Draft.ContentState.createFromText(content);
 			let editorState = Draft.EditorState.createWithContent(contentState);
 			
-			// TODO clear parsetree?
-			// TODO focus if parsetree
-			this.setState({ /*treeData: null, treeView: false,*/ editor : editorState }, () => this.parse());
+			this.setState({ editor : editorState }, () => this.parse());
 		};
 		reader.readAsText(file);
 	}
@@ -259,7 +256,6 @@ export default class Editor extends React.Component {
 					accept='.txt'
 					style={{display: 'none'}}
 					onChange={e => this.handleFile(e.target.files[0])} />
-					{/* TODO onChange? */}
 			</label>	
 		);
 	}
