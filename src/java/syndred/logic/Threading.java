@@ -81,15 +81,18 @@ public class Threading {
 		parser.setRunning(false);
 
 		try {
-			switch (parser.getName()) {
+			if (parser.getGrammar().equals("")) 
+				throw new ExecutionException("No grammar specified", /*TODO*/new Throwable());
+			
+/*			switch (parser.getName()) {
 			// case "abnf":
 			// future = executorService.submit(new AbnfTask(input.get(instance),
 			// output.get(instance), parser));
 			// break;
 
-			case "rbnf":
+			case "rbnf":*/
 				future = executorService.submit(new RbnfTask(input.get(instance), output.get(instance), parser));
-				break;
+		/*		break;
 
 			case "regex":
 				future = executorService.submit(new RegexTask(input.get(instance), output.get(instance), parser));
@@ -102,7 +105,7 @@ public class Threading {
 			default:
 				parser.setError("Parser not implemented");
 				return parser;
-			}
+			}*/
 		} catch (ExecutionException error) {
 			parser.setError(error.getMessage());
 			return parser;

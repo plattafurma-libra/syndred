@@ -36,6 +36,11 @@ public class Shared {
 		return this.sharedText;
 	}
 	
+	public void setGrammar(String grammar) {	
+		grammar = grammar.concat(".txt");
+		sharedText.setGrammar(grammar);
+	}
+	
 	// ch is put to texts.sharedTexts.textAsCharArray from Editor Gui (s. EditParseGUI where setCharFromSWTText is 
 	// called (textAsCharArray is private in Shared; thus, it is only accessible by getters and setters).
 	// this might be a similar  interface to draft's json objects and their difference in order to 

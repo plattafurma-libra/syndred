@@ -1,0 +1,7 @@
+dictionary={entry [NEWLINE]} [EOT].
+entry = headword":"definition".".
+headword = ("[a-zA-Z]+" |
+"[\u0370-\u03FF]+" ).
+definition = [BLANK] pos {sense}.
+pos = "m" | "f" | "n" |"adj" | "adv" | "v.t." | "v.i." | "v.r.". 
+sense = BLANK "[a-zA-Z]+".

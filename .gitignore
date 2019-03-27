@@ -10,5 +10,4 @@ target/
 
 .DS_Store
 *.lst
-vendor/tmp/
 start.sh

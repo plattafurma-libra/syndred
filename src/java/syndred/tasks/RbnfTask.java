@@ -49,8 +49,7 @@ public class RbnfTask extends Task {
 		});
 
 		shared = new Shared();
-//		shared.setGrammar(parser.getGrammar().chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
-//		shared.setRegex("\\u00FC:\n\\u00FD:".chars().mapToObj(i -> (char) i).collect(Collectors.toList()));
+		shared.setGrammar(parser.getGrammar());
 
 		try {
 			ebnfThread.start();

@@ -26,8 +26,8 @@ public class Texts {
 	//-----------syntaxDriven true syndred false-------
 	public static boolean syntaxDriven=false;
 	//-----------------------------------------
-	static private String grammar=/*"C://users//rols//lexGrammar.txt"*/"/Users/SKrause/git/syndred/vendor/tmp/testLexGrammar.txt";
-	static private String reservedGrammar=/*"C://users//rols//reservedGrammar.txt"*/"/Users/SKrause/git/syndred/vendor/tmp/testReservedGrammar.txt";
+	static private String grammar;
+	static private String reservedGrammar="vendor/res/tmp/testReservedGrammar.txt";	// TODO server path, see below
 	//static public String regex="C://users//rols//Regex.txt";
 	private StringBuffer ebnfBuf=new StringBuffer();
 	private int ebnfPos=0;
@@ -46,6 +46,18 @@ public class Texts {
 	
 	*/
 	
+	// TODO server path, see above
+	protected void setGrammar(String grammar) {
+		String hash = "#";
+		
+		if (grammar.startsWith(hash)) {
+			grammar = grammar.replace(hash, "");
+			Texts.grammar = "vendor/tmp/";
+		} else
+			Texts.grammar = "vendor/res/tmp/";
+		
+		Texts.grammar = Texts.grammar.concat(grammar);
+	}
 	
 	public void setTextAsRichCharList(String str) {
 		this.textAsRichCharList = 
