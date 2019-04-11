@@ -253,11 +253,15 @@ export default class Editor extends React.Component {
 				<i className='fa fa-paste' />
 				<input 
 					type='file'
-					accept='.txt'
+					accept='.txt,.json'
 					style={{display: 'none'}}
 					onChange={e => this.handleFile(e.target.files[0])} />
 			</label>	
 		);
 	}
 
+	tree() {
+		return this.state.treeData;
+	}
+	
 }

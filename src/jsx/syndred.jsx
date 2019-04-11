@@ -44,7 +44,9 @@ class Syndred extends React.Component {
 						run={() => this.editor.parse()}
 						socket={this.state.socket}
 					/>
-					<Generator/>
+					<Generator
+						tree={() => this.editor.tree()}
+					/>
 				</div>
 				<div className='col-md-7'>
 					<Editor

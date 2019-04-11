@@ -1,5 +1,9 @@
 package syndred.tasks;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,16 +37,31 @@ public class RbnfTask extends Task {
 		super(input, output, parser);
 
 		ebnfThread = new Thread(() -> {
+			PrintStream stdStream = System.out;
+			PrintStream fileStream = null;
+			
+			try {
+				fileStream = new PrintStream(new BufferedOutputStream(new FileOutputStream("vendor/log/EBNF.log")));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+			System.setOut(fileStream);
+			
 			ebnf = new Ebnf1_EBNF();	
 			ebnf.init(shared);
 			
 			while (!Thread.interrupted()) {
+				System.setOut(fileStream);
+				
 				try {
 					ebnf.root = ebnf.syntaxDrivenParse();					
 					success = true;
 
-					while (success)
+					while (success) {
+						System.setOut(stdStream);
 						Thread.sleep(100);
+					}
 				} catch (Throwable thrown) {
 				}
 			} 
