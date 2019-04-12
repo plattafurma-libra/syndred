@@ -27,7 +27,7 @@ public class Texts {
 	public static boolean syntaxDriven=false;
 	//-----------------------------------------
 	static private String grammar;
-	static private String reservedGrammar="vendor/res/tmp/testReservedGrammar.txt";	// TODO server path, see below
+	static private String reservedGrammar="vendor/res/tmp/ReservedGrammar.txt";	// TODO server path, see below
 	//static public String regex="C://users//rols//Regex.txt";
 	private StringBuffer ebnfBuf=new StringBuffer();
 	private int ebnfPos=0;

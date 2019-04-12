@@ -336,6 +336,7 @@ BEGIN
 				------------------------------------------*)
 				(* JR, regex *)
 				LOOP
+					(*
 					IF ebnf.ch=22X THEN
 						IF i=0 (*empty terminal string*) THEN EXIT
 						ELSIF ebnf.id[i] # '\'  (* quote is NOT escaped *) THEN EXIT
@@ -343,6 +344,19 @@ BEGIN
 						i.e. termination by '"'*)
 								THEN EXIT
 						END;
+					END;
+					*)
+					IF ebnf. ch=22X (*quote*) THEN
+						IF i=0 (*empty terminal string*) THEN EXIT
+						(* case of quote which is not escaped;
+						quote terminates string *)
+						ELSIF ebnf.id[i-1] # '\'  THEN EXIT
+						ELSIF (i > 1) & (ebnf.id[i-2] = '\') (* '\' is escaped by '\', 
+						i.e. termination by quote, sequence is '...\\"' *)
+								THEN EXIT
+						END;
+						(* quote is escaped, don't leave loop,
+						sequence is '..\"..' *)
 					END;
 				    ebnf.id[i]:= ebnf.ch;
                     INC(i);
