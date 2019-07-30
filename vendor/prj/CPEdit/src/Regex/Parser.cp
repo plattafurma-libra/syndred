@@ -42,7 +42,9 @@ Quantifier*=POINTER TO RECORD
 END; 
 
 
-CONST char=0;asterisk=1;plus=2;qum=3;bar=4;osquareBr=5;csquareBr=6;neg=7 (*^*);escape=8;lKlammer=9;rKlammer=10;glKlammer=11;grKlammer=12;strich=13;punkt=14; other=15;
+CONST char=0;asterisk=1;plus=2;qum=3;bar=4;osquareBr=5;csquareBr=6;
+neg=7 (*^*);escape=8;lKlammer=9;rKlammer=10;
+glKlammer=11;grKlammer=12;strich=13;punkt=14; other=15;
 
 VAR 	ok:BOOLEAN;
 		regex:Regex;
@@ -119,7 +121,8 @@ BEGIN
 	CHR(94  )..CHR(122),
 	CHR(126)..CHR(255),
 	(*greek*)
-	CHR(880)..CHR(1023):sym:=char;iden:=ch; Read(); (*alles auكer Metachar*)
+	CHR(880)..CHR(1023):sym:=char;iden:=ch; Read(); (*alles ausser 
+	Metachar*)
 	| "*":sym:=asterisk; Read();
 	| "+":sym:=plus; Read();
 	| "?":sym:=qum; Read();
@@ -223,6 +226,13 @@ BEGIN
 	RETURN texts.Texts.convertUnicode(MKSTR(str));
 END unicode;
 
+(*
+EBNF.factor vor RegexApi.CreateRegex id:\"
+ GetSym sym:  8
+ GetSym sym:  0
+Atom sym:  0 ch: 
+
+*)
 
 
 PROCEDURE SingleCharEsc (VAR char:CHAR); 
@@ -257,6 +267,8 @@ BEGIN
 		IF iden="n" THEN char:=0AX; 
 		ELSIF iden="r" THEN char:=0DX;
 		ELSIF iden="t" THEN char:=09X;
+		ELSIF iden = 22X (*quote*) THEN char :=22X;
+		
 		ELSE (* Interface_Halt.halt.HaltPar(127); *) Error(2);
 		END;
 	END;

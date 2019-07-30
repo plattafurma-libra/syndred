@@ -1,8 +1,8 @@
 package syndred.tasks;
 
-import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+
+import org.apache.commons.io.output.TeeOutputStream;
 
 import CP.Ebnf1.Ebnf1_EBNF;
 import syndred.entities.Block;
@@ -37,29 +39,32 @@ public class RbnfTask extends Task {
 		super(input, output, parser);
 
 		ebnfThread = new Thread(() -> {
-			PrintStream stdStream = System.out;
-			PrintStream fileStream = null;
+			PrintStream consoleStream = System.out;
+			OutputStream fileStream = null;
 			
 			try {
-				fileStream = new PrintStream(new BufferedOutputStream(new FileOutputStream("vendor/log/EBNF.log")));
+				fileStream = /*new BufferedOutputStream(*/new FileOutputStream("vendor/log/EBNF.log")/*)*/;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
+
+			TeeOutputStream dualStream = new TeeOutputStream(fileStream, consoleStream);
+			PrintStream log = new PrintStream(dualStream/*fileStream*/);
 			
-			System.setOut(fileStream);
+			System.setOut(log);
 			
 			ebnf = new Ebnf1_EBNF();	
 			ebnf.init(shared);
 			
 			while (!Thread.interrupted()) {
-				System.setOut(fileStream);
+//				System.setOut(log);
 				
 				try {
 					ebnf.root = ebnf.syntaxDrivenParse();					
 					success = true;
 
 					while (success) {
-						System.setOut(stdStream);
+//						System.setOut(consoleStream);
 						Thread.sleep(100);
 					}
 				} catch (Throwable thrown) {
@@ -121,7 +126,10 @@ public class RbnfTask extends Task {
 			DraftState.add(state, "Success", 0, next.size());
 			parseTree = Node.resultString;
 		} 
-
+		
+		if (state.isGenerator() == null)
+			state.setGenerator("false");
+		
 		state.setParseTree(parseTree);
 		return state;
 	}

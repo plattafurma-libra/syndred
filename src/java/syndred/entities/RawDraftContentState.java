@@ -8,9 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "parseTree", "entityMap", "blocks" })
+@JsonPropertyOrder({ "generator", "parseTree", "entityMap", "blocks" })
 public class RawDraftContentState implements Serializable {
 
+	@JsonProperty("generator")
+	private String generator;
+	
 	@JsonProperty("parseTree")
 	private String parseTree;
 
@@ -21,6 +24,16 @@ public class RawDraftContentState implements Serializable {
 	private List<Block> blocks = null;
 
 	private final static long serialVersionUID = 8697339451658053396L;
+	
+	@JsonProperty("generator")
+	public String isGenerator() {
+		return generator;
+	}
+
+	@JsonProperty("generator")
+	public void setGenerator(String generator) {
+		this.generator = generator;
+	}
 
 	@JsonProperty("parseTree")
 	public String getParseTree() {

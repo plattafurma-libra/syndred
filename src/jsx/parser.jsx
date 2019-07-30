@@ -105,20 +105,20 @@ export default class Parser extends React.Component {
 					<hr/>
 					
 					{/*STATUS*/}
-					<div className={'form-group'
+					<div className={'text-center form-group'
 						+ (this.state.error ? ' has-error' : '')
 						+ (this.state.running ?' has-success' : '')}>
-						<label className='col-lg-2 control-label'>
+						{/*<label className='col-lg-2 control-label'>
 							Status
-						</label>
-						<div className='col-lg-4'>
+						</label>*/}
+						<div className='col-lg-12'>
 							<button
-								className='btn btn-block btn-primary'
+								className='btn btn-primary'
 								onClick={(event) => this.setParser(event)}>
-								Apply
+								Parse
 							</button>
 						</div>
-						<div id='parsed' className='col-lg-6'></div>
+						<div id='parsed' className='col-lg-12'></div>
 					</div>
 				</fieldset>
 			</form>
@@ -221,7 +221,7 @@ export default class Parser extends React.Component {
 				var file = $(show).find(input).prop('files')[0];
 				
 				if (file != null) {
-					this.upload(file);					
+					this.props.syndred.read(file, this, this.upload)
 					this.setGrammarParsed(location.hash, file.name);
 				}
 		}
@@ -241,16 +241,9 @@ export default class Parser extends React.Component {
 	}
 	
 	// TODO empty grammar?
-	upload(file) {
-		let reader = new FileReader();
-		reader.onloadend = (e) => {
-			/*var content = e.target.result;
-			
-			if (content.length > 0)*/ 
-			this.props.socket
-				.send(`${this.dest}upload`, { }, /*content*/e.target.result);
-		};
-		reader.readAsText(file);
+	upload(instance, content) {
+		instance.props.socket
+			.send(`${instance.dest}upload`, { }, content);
 	}
 
 }

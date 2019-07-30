@@ -843,8 +843,12 @@ BEGIN (*parse*)
 		
 		resParse:=ebnf.parse(treeNode(tree.NonTerminalTreeNode),NIL,
 		node(Nonterminal).ptrToHeaderList(*pointer to headerlist*).entry);
-		IF resParse THEN TextsCP.WriteString("@parse resParse true")
+		IF resParse THEN TextsCP.WriteString("@parse resParse true");
+			TextsCP.WriteString(" Pos: ");
+			TextsCP.WriteInt(ebnf.shared.getSharedText().getParsePos(),2);
 		ELSE TextsCP.WriteString("@parse resParse false");
+			TextsCP.WriteString(" Pos: ");
+			TextsCP.WriteInt(ebnf.shared.getSharedText().getParsePos(),2);
 			treeNode:=NIL;
 		END;
 		TextsCP.WriteLn();
@@ -948,12 +952,11 @@ BEGIN
 	(*RegexReplace.Init();*)	
 	
 	IF ebnf.Compile() THEN 		
-		TextsCP.WriteString("nach Compile");TextsCP.WriteLn();		
+		TextsCP.WriteString("after Compile");TextsCP.WriteLn();		
 		NEW(ebnf.startsymbol);
 		ebnf.startsymbol.alt:=NIL;ebnf.startsymbol.next:=NIL;	
 		ebnf.startsymbol.ptrToHeaderList:=ebnf.list;
-		ebnf.shared:=sh;
-		
+		ebnf.shared:=sh;		
 		RETURN TRUE;
 	ELSE 
 		TextsCP.WriteString("Compile false");TextsCP.WriteLn();

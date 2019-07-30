@@ -29,39 +29,39 @@ public class Interceptor extends ChannelInterceptorAdapter {
 			String session = sha.getSessionId();
 
 			switch (sha.getCommand()) {
-			case CONNECT:
-				instance = sha.getFirstNativeHeader("instance");
-
-				Threading.connect(instance);
-				mapping.put(session, instance);
-
-				break;
-			case DISCONNECT:
-				instance = mapping.get(session);
-
-				mapping.remove(session);
-				if (!mapping.containsValue(instance))
-					Threading.disconnect(instance);
-
-				break;
-			case SUBSCRIBE:
-				instance = mapping.get(session);
-
-				if (sha.getDestination().equals("/syndred/" + instance + "/editor/pull")) {
-					SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-					headers.setSessionAttributes(sha.getSessionAttributes());
-					headers.setSubscriptionId(sha.getSubscriptionId());
-					headers.setSessionId(sha.getSessionId());
-
-					SimpMessagingTemplate smt = new SimpMessagingTemplate(channel);
-					smt.setMessageConverter(new MappingJackson2MessageConverter());
-
-					Threading.callback(instance, callback(instance, headers.getMessageHeaders(), smt));
-				}
-
-				break;
-			default:
-				break;
+				case CONNECT:
+					instance = sha.getFirstNativeHeader("instance");
+	
+					Threading.connect(instance);
+					mapping.put(session, instance);
+	
+					break;
+				case DISCONNECT:
+					instance = mapping.get(session);
+	
+					mapping.remove(session);
+					if (!mapping.containsValue(instance))
+						Threading.disconnect(instance);
+	
+					break;
+				case SUBSCRIBE:
+					instance = mapping.get(session);
+	
+					if (sha.getDestination().equals("/syndred/" + instance + "/editor/pull")) {
+						SimpMessageHeaderAccessor headers = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+						headers.setSessionAttributes(sha.getSessionAttributes());
+						headers.setSubscriptionId(sha.getSubscriptionId());
+						headers.setSessionId(sha.getSessionId());
+	
+						SimpMessagingTemplate smt = new SimpMessagingTemplate(channel);
+						smt.setMessageConverter(new MappingJackson2MessageConverter());
+	
+						Threading.callback(instance, callback(instance, headers.getMessageHeaders(), smt));
+					}
+	
+					break;
+				default:
+					break;
 			}
 		}
 	}

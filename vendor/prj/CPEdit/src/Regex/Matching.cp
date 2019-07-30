@@ -124,10 +124,11 @@ VAR  branch:RegexParser.Branch;
 				
 			PROCEDURE MatchAtom(atom:RegexParser.Atom; VAR flag:BOOLEAN);
 			VAR range:RegexParser.Range;res:INTEGER;
-			
+				x:INTEGER;
 				
 			BEGIN (* MatchAtom *)
 				WriteEntry("MatchAtom ",' ',-1);
+				
 				IF sh.backTrack THEN 
 					WriteMessage("MatchAtom sh.backTrack RETURN");
 					RETURN 
@@ -136,8 +137,15 @@ VAR  branch:RegexParser.Branch;
 					WriteMessage("MatchAtom range Nil vor MatchRegex");
 					MatchRegex(atom.regex,resetPos,flag,sh);
 				ELSE	
-				
+					x:=sh.getSharedText().getParsePos();
+					WriteMessage("MatchAtom before getSym() x: ");
+					TextsCP.WriteInt(x,2);
+					TextsCP.WriteLn;
 					rch := sh.getSym();
+					x:=sh.getSharedText().getParsePos();
+					WriteMessage("MatchAtom after getSym() x: ");
+					TextsCP.WriteInt(x,2);
+					TextsCP.WriteLn;
 							
 					IF sh.backTrack THEN 
 						WriteMessage("MatchAtom sh.backtrack nach getSym");
@@ -204,12 +212,17 @@ VAR  branch:RegexParser.Branch;
 					TextsCP.WriteString("MatchPiece max");TextsCP.WriteInt(max,2);
 					q:=0;
 					
-					
 					j1:=i;
 					REPEAT 
-						WriteMessage("MatchPiece Case 2 quantified in Repeat vor MatchAtom");
+						WriteMessage("MatchPiece Case 2 quantified in Repeat vor MatchAtom i: ");
+						TextsCP.WriteInt(i,2);
+						TextsCP.WriteLn;
 						MatchAtom(atom,flag);
 						i:=sh.getSharedText().getParsePos();
+						WriteMessage("MatchPiece after getSharedText.getParsePos() i: ");
+						TextsCP.WriteInt(i,2);
+						TextsCP.WriteLn;
+						
 						IF sh.backTrack THEN 
 							WriteMessage("MatchPiece in Repeat sh.backTrack");
 							RETURN 
@@ -250,6 +263,7 @@ VAR  branch:RegexParser.Branch;
 						IF atom.regex=NIL THEN DEC(i) END 
 					END;
 					(* 							  *)
+					(* ?? check, because repeated ??*)
 					sh.getSharedText().setParsePos(i);
 		
 			END (*end-case*);

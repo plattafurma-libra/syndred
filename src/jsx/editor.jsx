@@ -76,22 +76,29 @@ export default class Editor extends React.Component {
 
 		this.props.socket.subscribe(`${this.dest}pull`,
 			(message) => {
+				//console.log("PULL");
+				console.log(message.body);
+				
 				let data = JSON.parse(message.body);
 				if (Object.getOwnPropertyNames(data).length == 0) return;
 				
-				let cursor = this.state.editor.getSelection();
-				let editor = Draft.EditorState
-					.push(this.state.editor, Draft.convertFromRaw(data));
-
-				if (cursor.getHasFocus())
-					editor = Draft.EditorState.forceSelection(editor, cursor);
-
 				//console.log('parseTree', data.parseTree);
 				let treeData = data.parseTree
 					? JSON.parse(data.parseTree) : null;
-			
-				this.setState({ editor, treeData, treeView: false },
-					() => this.screen.classList.remove('disabled'));
+				
+				if (data.generator == "true") {
+					this.setState({ treeData, treeView: false });
+				} else {
+					let cursor = this.state.editor.getSelection();
+					let editor = Draft.EditorState
+						.push(this.state.editor, Draft.convertFromRaw(data));
+	
+					if (cursor.getHasFocus())
+						editor = Draft.EditorState.forceSelection(editor, cursor);
+				
+					this.setState({ editor, treeData, treeView: false },
+						() => this.screen.classList.remove('disabled'));
+				}
 			}
 		);
 	}
@@ -109,7 +116,7 @@ export default class Editor extends React.Component {
 		let parse = !this.state.editor.getCurrentContent()
 			.equals(editor.getCurrentContent());
 
-		this.setState({ editor }, () => parse && this.parse());
+		this.setState({ editor/*slow!!!*/ }, () => parse && this.parse());
 	}
 
 	parse() {
@@ -234,19 +241,6 @@ export default class Editor extends React.Component {
 		);
 	}
 	
-	handleFile(file) {		
-		let reader = new FileReader();
-		reader.onloadend = (e) => {
-			let content = e.target.result;
-			
-			let contentState = Draft.ContentState.createFromText(content);
-			let editorState = Draft.EditorState.createWithContent(contentState);
-			
-			this.setState({ editor : editorState }, () => this.parse());
-		};
-		reader.readAsText(file);
-	}
-	
 	renderInput() {		
 		return (
 			<label className='btn btn-default'>
@@ -255,9 +249,16 @@ export default class Editor extends React.Component {
 					type='file'
 					accept='.txt,.json'
 					style={{display: 'none'}}
-					onChange={e => this.handleFile(e.target.files[0])} />
+					onChange={e => this.props.syndred.read(e.target.files[0], this, this.paste)} />
 			</label>	
 		);
+	}
+	
+	paste(instance, content) {
+		let contentState = Draft.ContentState.createFromText(content);
+		let editorState = Draft.EditorState.createWithContent(contentState);
+		
+		instance.setState({ editor : editorState }, () => instance.parse());
 	}
 
 	tree() {

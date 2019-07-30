@@ -152,7 +152,8 @@ public class Shared {
 	// syndred w/o SyntaxTree (-> SDE)
 	private RichChar getSym_syndred() {
 		try {
-			while (sharedText.getParsePos() == sharedText.getTextLen())
+			/* 19-05-16 changed >= instead of == */
+			while (sharedText.getParsePos() >= /*==*/  sharedText.getTextLen())
 				Thread.sleep(100);
 		} catch (InterruptedException e) {
 			return new RichChar('\0');

@@ -14,9 +14,12 @@ class Syndred extends React.Component {
 
 		this.state = {
 			ready: false,
+			// TODO: AMQP?
 			socket: Stomp.over(new SockJS('/websocket'))
 		};
 		this.state.socket.debug = null;
+		// TODO
+		this.state.socket.maxWebSocketFrameSize = /*126*/10000;
 	}
 
 	componentDidMount() {
@@ -24,8 +27,8 @@ class Syndred extends React.Component {
 
 		if (!this.state.ready)
 			this.state.socket.connect({ instance: location.hash },
-				() => this.setState({ ready: true }),
-				() => this.setState({ ready: false }));
+				() => this.setState({ ready: true })/* TODO,
+				() => this.setState({ ready: false })*/);
 	}
 
 	componentWillMount() {
@@ -43,15 +46,22 @@ class Syndred extends React.Component {
 					<Parser
 						run={() => this.editor.parse()}
 						socket={this.state.socket}
+						
+						syndred={this}
 					/>
 					<Generator
 						tree={() => this.editor.tree()}
+						
+						socket={this.state.socket}
+						syndred={this}
 					/>
 				</div>
 				<div className='col-md-7'>
 					<Editor
 						ref={(ref) => this.editor = ref}
 						socket={this.state.socket}
+						
+						syndred={this}
 					/>
 				</div>
 			</div>
@@ -63,6 +73,14 @@ class Syndred extends React.Component {
 				</div>
 			</div>
 		);
+	}
+	
+	read(file, instance, callback) {
+		let reader = new FileReader();
+		reader.onloadend = (e) => {
+			callback(instance, e.target.result);
+		};
+		reader.readAsText(file);
 	}
 
 }
